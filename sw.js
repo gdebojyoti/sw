@@ -1,3 +1,52 @@
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js') // synchronous; doesn't need to be at the top
+
+if (workbox) {
+  console.log("Yay! Workbox is loaded 🎉", workbox)
+  console.log("strategies", workbox.strategies)
+
+  workbox.core.setCacheNameDetails({
+    prefix: 'my-sw-app',
+    suffix: 'v1',
+    precache: 'custom-precache-name',
+    runtime: 'custom-runtime-name'
+  })
+
+  // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies.html
+  workbox.routing.registerRoute(
+    /\.js$/,
+    new workbox.strategies.NetworkFirst({
+      cacheName: 'js-cache'
+    })
+  )
+  workbox.routing.registerRoute(
+    /\.css$/,
+    new workbox.strategies.StaleWhileRevalidate({
+      cacheName: 'css-cache'
+    })
+  )
+
+  workbox.precaching.precacheAndRoute([
+    // '/styles/index.0c9a31.css',
+    // '/scripts/main.0d5770.js',
+    { url: '/index.html', revision: '383676' },
+  ])
+  
+} else {
+  console.log("Boo! Workbox didn't load 😬")
+}
+
+self.addEventListener('install', () => {
+  console.log("installing....")
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', () => {
+  console.log("activating.....")
+})
+
+
+/*
+
 const cacheName = 'chilly_muffins'
 const cacheNameFake = 'chilly_muffins_fake'
 const cacheWhitelist = [cacheName]
@@ -67,3 +116,5 @@ self.addEventListener('fetch', function(event) {
       .catch(console.log)
   ))
 })
+
+*/
