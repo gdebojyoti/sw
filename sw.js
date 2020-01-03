@@ -11,6 +11,13 @@ if (workbox) {
     runtime: 'custom-runtime-name'
   })
 
+  // precaching
+  workbox.precaching.precacheAndRoute([
+    // '/styles/index.0c9a31.css',
+    // '/scripts/main.0d5770.js',
+    { url: '/index.html', revision: '383676' }
+  ])
+
   // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies.html
   workbox.routing.registerRoute(
     /\.js$/,
@@ -25,11 +32,18 @@ if (workbox) {
     })
   )
 
-  workbox.precaching.precacheAndRoute([
-    // '/styles/index.0c9a31.css',
-    // '/scripts/main.0d5770.js',
-    { url: '/index.html', revision: '383676' },
-  ])
+  // cache API responses
+  workbox.routing.registerRoute(
+    new RegExp('^https://pokeapi\\.co/api/v2/pokemon/1/'),
+    new workbox.strategies.CacheFirst({
+      cacheName: 'api-cache',
+      plugins: [
+        new workbox.cacheableResponse.Plugin({
+          statuses: [0, 200],
+        })
+      ]
+    })
+  )
   
 } else {
   console.log("Boo! Workbox didn't load 😬")
@@ -42,6 +56,30 @@ self.addEventListener('install', () => {
 
 self.addEventListener('activate', () => {
   console.log("activating.....")
+})
+
+
+// // NOT WORKING
+// self.addEventListener('fetch', (event) => {
+//   console.log("fetching...", event)
+
+//   event.waitUntil(
+//     event.clientId && clients.get(event.clientId).then(client => {
+//       console.log("triggering...", client)
+//       if (client) {
+//         // send message to DOM
+//         client.postMessage({
+//           msg: "Hey I just got a fetch from you!",
+//           url: event.request.url
+//         })
+//       }
+//     })
+//   )
+// })
+
+// listen to messages triggered from DOM
+self.addEventListener('message', event => { 
+  console.log("on click data received via postmessage", event.data)
 })
 
 

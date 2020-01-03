@@ -9,26 +9,35 @@
 // }
 
 window.addEventListener('load', () => {
+  // register service worker
   navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(onRegister, onError)
 
+  // listen to messages emitted by sw
+  navigator.serviceWorker.addEventListener('message', event => {
+    console.info("message", event.data.msg, event.data.url)
+  })
+
+  // on button click
   const btn = document.getElementById('btn')
   console.log("Web page has loaded", btn)
   btn.addEventListener('click', onButtonClick)
 })
 
+// registration succeded
 const onRegister = registration => {
-  // registration succeded
   console.log('ServiceWorker registration successful with scope!', registration.scope)
 }
 
+// registration failed
 const onError = err => {
-  // registration failed
   console.log('ServiceWorker registration failed.', err);
 }
 
 const onButtonClick = e => {
-  console.log("Clicked!")
-  window.fetch('https://pokeapi.co/api/v2/pokemon/1/').then(data => {
-    console.log("API response", data)
-  })
+  window.fetch('https://pokeapi.co/api/v2/pokemon/1/')
+    .then(data => data.json())
+    .then(data => {
+      console.log("API response", data)
+      navigator.serviceWorker.controller.postMessage(data)
+    })
 }
