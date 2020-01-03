@@ -1,15 +1,3 @@
-const onRegister = registration => {
-  // registration succeded
-  console.log('ServiceWorker registration successful with scope!', registration.scope)
-}
-
-const onError = err => {
-  // registration failed
-  console.log('ServiceWorker registration failed.', err);
-}
-
-navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(onRegister, onError)
-
 // use the Service-Worker-Allowed HTTP header to allow the scope
 // response.writeHead(200, {'Service-Worker-Allowed':'/', 'Content-Type':'application/javascript'});
 
@@ -21,10 +9,22 @@ navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(onRegister, onEr
 // }
 
 window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(onRegister, onError)
+
   const btn = document.getElementById('btn')
-  console.log("Loaded...", btn)
+  console.log("Web page has loaded", btn)
   btn.addEventListener('click', onButtonClick)
 })
+
+const onRegister = registration => {
+  // registration succeded
+  console.log('ServiceWorker registration successful with scope!', registration.scope)
+}
+
+const onError = err => {
+  // registration failed
+  console.log('ServiceWorker registration failed.', err);
+}
 
 const onButtonClick = e => {
   console.log("Clicked!")
