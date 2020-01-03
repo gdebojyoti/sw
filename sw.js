@@ -13,8 +13,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting()
   
   event.waitUntil(
-      /* open method available on caches, takes in the name of cache as the first paramter. It returns a promise that resolves to the instance of cache
-      All the above URLS can be added to cache using the addAll method. */
+      // open method available on caches, takes in the name of cache as the first paramter. It returns a promise that resolves to the instance of cache all the above URLS can be added to cache using the addAll method.
       Promise.all([
         caches.open(cacheName)
         .then (cache => {
@@ -37,7 +36,7 @@ self.addEventListener('activate', (event) => {
         console.log("caches...", caches, cacheNames)
           return Promise.all(
             cacheNames.map( cacheName => {
-              /* Deleting all the caches except the ones that are in cacheWhitelist array */
+              // Deleting all the caches except the ones that are in cacheWhitelist array
               if (!cacheWhitelist.includes(cacheName)) {
                 return caches.delete(cacheName)
               }
